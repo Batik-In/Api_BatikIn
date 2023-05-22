@@ -3,6 +3,7 @@ import httpResponse from "../helpers/httpResponse";
 import prisma from "../config/prisma";
 import { ItemStatus } from "@prisma/client";
 import constant from "../config/constant";
+import { uid } from 'uid';
 
 export default {
     async createArticle (req: Request, res: Response) {
@@ -125,6 +126,71 @@ export default {
             console.log('ERROR on fetchArticleById : ', e);
             return httpResponse.mapError(e, res);
         }
+    },
+    async bookmarkArticle (req: Request, res: Response) {
+        try {
+            const { articleId } = req.body;
+            if(req.user?.role !== 'USER') {
+                return httpResponse.forbiddenAccess(res);
+            }
+            const exists = await prisma.articles.findFirst({
+                where: {
+                    id: Number(articleId)
+                }
+            });
+            if(!exists) {
+                return httpResponse.send(res, 404, constant.data_not_found, undefined);
+            }
+            const data = await prisma.savedArticles.create({
+                data: {
+                    id: uid(32),
+                    userId: Number(req.user.id),
+                    articleId: Number(articleId)
+                }
+            });
+            return httpResponse.send(res, 201, constant.success, data);
+        } catch(e) {
+            console.log('ERROR on bookmarkArticle : ', e);
+            return httpResponse.mapError(e, res);
+        }
+    },
+    async removeBookmark (req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            if(req.user?.role !== 'USER') {
+                return httpResponse.forbiddenAccess(res);
+            }
+            const data = await prisma.savedArticles.findFirst({
+                where: {
+                    id: id as string
+                }
+            });
+            if(!data) {
+                return httpResponse.send(res, 404, constant.data_not_found, undefined);
+            }
+            if(req.user.id !== data.userId) {
+                return httpResponse.forbiddenAccess(res);
+            }
+            return httpResponse.send(res, 200, constant.success, undefined);
+        } catch(e) {
+            console.log('ERROR on removeBookmark : ', e);
+            return httpResponse.mapError(e, res);
+        }
+    },
+    async fetchBookmarkArticles (req: Request, res: Response) {
+        try {
+            if(req.user?.role !== 'USER') {
+                return httpResponse.forbiddenAccess(res);
+            }
+            const data = await prisma.savedArticles.findMany({
+                where: {
+                    userId: Number(req.user.id)
+                }
+            });
+            return httpResponse.send(res, 200, constant.success, data);
+        } catch(e) {
+            console.log('ERROR on fetchBookmarkArticles : ', e);
+            return httpResponse.mapError(e, res);
+        }
     }
-
 }
