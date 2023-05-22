@@ -3,8 +3,8 @@ import path from 'path';
 import cors from 'cors';
 import http from 'http';
 import * as dotenv from 'dotenv';
-//import router from './routes';
-
+import logger from 'morgan';
+import router from './server/routes';
 
 dotenv.config();
 const env = process.env.NODE_ENV || 'development';
@@ -13,12 +13,17 @@ const app = express();
 
 let server = http.createServer(app);
 
-//app.use(logger('dev'));
+app.use(logger('dev'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, '../public')));
-//app.use(router);
+app.get('/', async (req, res) => {
+  return res.status(200).json({
+    message: 'this is backend endpoint for batik mobile apps :D',
+  });
+});
+app.use(router);
 
 const onListening = () => {
   console.log(`[STARTING] ${env} application on port ${port}`)

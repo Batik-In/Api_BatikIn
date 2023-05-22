@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31,18 +40,24 @@ const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
 const http_1 = __importDefault(require("http"));
 const dotenv = __importStar(require("dotenv"));
-//import router from './routes';
+const morgan_1 = __importDefault(require("morgan"));
+const routes_1 = __importDefault(require("./server/routes"));
 dotenv.config();
 const env = process.env.NODE_ENV || 'development';
 const port = process.env.PORT || 3000;
 const app = (0, express_1.default)();
 let server = http_1.default.createServer(app);
-//app.use(logger('dev'));
+app.use((0, morgan_1.default)('dev'));
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(path_1.default.resolve(__dirname, '../public')));
-//app.use(router);
+app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    return res.status(200).json({
+        message: 'this is backend endpoint for batik mobile apps :D',
+    });
+}));
+app.use(routes_1.default);
 const onListening = () => {
     console.log(`[STARTING] ${env} application on port ${port}`);
 };
