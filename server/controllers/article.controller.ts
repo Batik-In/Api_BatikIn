@@ -8,6 +8,9 @@ export default {
     async createArticle (req: Request, res: Response) {
         try {
             const { categoryId, title, subtitle, content, image, status } = req.body;
+            if(req.user?.role !== 'ADMIN') {
+                return httpResponse.forbiddenAccess(res);
+            }
             const data = await prisma.articles.create({
                 data: {
                     categoryId: Number(categoryId),
@@ -27,6 +30,9 @@ export default {
     async updateArticle (req: Request, res: Response) {
         try {
             const { id, categoryId, title, subtitle, content, image, status } = req.body;
+            if(req.user?.role !== 'ADMIN') {
+                return httpResponse.forbiddenAccess(res);
+            }
             const exists = await prisma.articles.findFirst({
                 where: {
                     id: Number(id)
@@ -58,6 +64,9 @@ export default {
     async deleteArticle (req: Request, res: Response) {
         try {
             const { id } = req.params;
+            if(req.user?.role !== 'ADMIN') {
+                return httpResponse.forbiddenAccess(res);
+            }
             const exists = await prisma.articles.findFirst({
                 where: {
                     id: Number(id)

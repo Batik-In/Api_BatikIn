@@ -1,12 +1,18 @@
 import { Response } from "express";
 import axios from 'axios';
 import { Prisma } from "@prisma/client";
+import constant from "../config/constant";
 
 export default {
     send(res: Response, code: number, message: string, data: any) {
         return res.status(code).json({
             message,
             data
+        });
+    },
+    forbiddenAccess(res: Response) {
+        return res.status(403).json({
+            message: constant.forbidden_access
         });
     },
     mapError(err: unknown, res: Response) {
@@ -73,6 +79,8 @@ export default {
         } catch (err) {
             console.error('Parsing error message fails::', err);
         }
-        return res?.status(status).json(message);
+        return res?.status(status).json({
+            message
+        });
     }
 }
