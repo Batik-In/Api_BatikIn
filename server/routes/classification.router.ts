@@ -1,10 +1,12 @@
 import express from 'express';
 import classificationController from '../controllers/classification.controller';
 import authenticateToken from '../middleware/authenticateToken';
+import multer from 'multer';
 
 const classificationRouter = express.Router();
+const upload = multer({ dest: 'uploads/' });
 
 classificationRouter.get('', authenticateToken, classificationController.fetchClassificationHistory);
-classificationRouter.post('', authenticateToken, classificationController.scanObject);
+classificationRouter.post('', classificationController.scanObject);
 
 export default classificationRouter;

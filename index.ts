@@ -4,6 +4,7 @@ import cors from 'cors';
 import http from 'http';
 import * as dotenv from 'dotenv';
 import logger from 'morgan';
+import multer from 'multer';
 import router from './server/routes';
 
 dotenv.config();
@@ -13,8 +14,16 @@ const app = express();
 
 let server = http.createServer(app);
 
+const multerMid = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+})
+
 app.use(logger('dev'));
 app.use(cors());
+app.use(multerMid.single('file'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, '../public')));

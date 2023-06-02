@@ -6,13 +6,14 @@
       "rootDir": "./",
       "outDir": "./dist-server",
       "esModuleInterop": true,
+      "skipLibCheck": true,
       "strict": true,
       "allowSyntheticDefaultImports": true,
       "resolveJsonModule": true,
-      "lib": ["DOM"],
     },
     "ts-node": {
       "swc": true
     },
-    "exclude": [ "node_modules", "views"]
+    "exclude": [ "node_modules", "views"],
+    "types": [],
   }
