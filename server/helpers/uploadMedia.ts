@@ -15,21 +15,15 @@ export const uploadMedia = (file: any) => new Promise((resolve, reject) => {
   const { originalname, buffer } = file;
   console.log('Upload Media !!');
   const blob = bucket.file(originalname.replace(/ /g, "_"));
-  const blobStream = blob.createWriteStream({
-    resumable: false
-  });
 
-  blobStream
-    .on('finish', () => {
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-      resolve(publicUrl);
-    })
-    .on('error', (e) => {
-      console.log(e);
+  blob.save(buffer, (err: any) => {
+    if (err) {
+      console.log(err);
       reject(`Unable to upload image, something went wrong`);
-    });
+      return;
+    }
 
-  blobStream.write(buffer);
-  blobStream.end(); // Remove this line
-
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+    resolve(publicUrl);
+  });
 });
