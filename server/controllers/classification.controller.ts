@@ -18,13 +18,17 @@ export default {
               res.status(400).send('No image file uploaded');
               return;
             }
+            console.log('Loading Model ..');
             const model = await tf.loadGraphModel(ML_MODEL_PATH);
+            console.log('Uploading Media ..');
             const mediaUrl = await uploadMedia(req.file);
 
+            console.log('Preprocess Image');
             /* Start Make the prediction using the loaded model */
             const inputData = await preprocessImage(mediaUrl as string);
             // Convert the input data to float32
             const float32InputData = inputData.toFloat();
+            console.log('Predicting...');
             const prediction = model.predict(float32InputData);
 
             let predictionValues: number[] | number[][] | number[][][] | number[][][][] | number[][][][][] | number[][][][][][];
