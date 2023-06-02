@@ -39,6 +39,7 @@ export default {
     },
     async processImage() {
         /* TODO : Forward image request to ML model */
+
     },
     async saveClassificationHistory(userId: number, image: string, status: ProcessStatus, result: any, rawResponse: string) {
         /* Function to save image classification hsitory */
