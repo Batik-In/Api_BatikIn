@@ -2,10 +2,10 @@ import { Storage } from '@google-cloud/storage';
 
 const storage = new Storage({
     credentials: {
-        client_email: process.env.GCLOUD_CLIENT_EMAIL,
-        private_key: process.env.GCLOUD_PRIVATE_KEY
+        client_email: 'storage-uploader@batikin-388401.iam.gserviceaccount.com',
+        private_key: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC/s5WYfYSkviso\nClYhO+MBdSne5ITPXQKyU8OgYC5gxkp95uQQoozOH3V+Piql+bZq2p9ptyi4ENQ/\nhQ+7CzQwbHfqsoij99OkXi5udDc3xS+9FQ7ZBkhEW+16XK3apND9UjxO36bLgtUv\nhB2JrZ+Cu8ZQTPopMKw2bcuD4LVhhk4ntY/TkA4bkS+Cg3Lk58I7zQCi1o4n02DZ\nd/XTztAbe89sQo1u/tR2nN4we5lz1v8aECX9Y2Ux2ZQHP/BJYNuXzCgBMcM+Xk9c\nxjiTJ2OUGUdFEJ2Jch4wtz78IHKYpdvDjjzgJD0Uqub/Om6QWvGhAijiy/tTe2qr\nDFRG7AeXAgMBAAECggEAB1Zr4PDY/WdMBpXSsyX0K++coSv1C2zfeAztvXtA+zJL\n0qLeUuat5gvdNu5ROpYizdc9Z9H7bIQ0Y5QHxJyKrFnSgzi/Myt+vdlfBJpNLMTO\n7XlbXqI3bOpp3hejDe3mE/QsW8aCv2JsH4v6h3UOWHYwgo1Xu/DhfpnYQt18g9WL\ns0JqX8xOG1AJwRu84PHyZa6XevUenqIoPDQsKIyfCHi6AOTRRhB34HnIwS+egNb8\nZOlo8K72DIhbsuLyk4M9kXrO0whhdzuJkgrWrq9tYV07shJP3satKTLjBafF90Zw\ntEBx+7nYlY2JmxKNBitWaqJnBMHkRZ3eqqhLqi3KjQKBgQDthhT007hi78hbrYY6\nPLRGNe4fYxa4rU8Pqr3uNe4d3c7STX7CopmpUPXyZq0+x5T70RHMULULTjK1Q7P0\nuWdbRmera4Jx8bhQqjeSvkLFRaUbMZzh6JQn09xc+ALXrxm3nHOZZ99hTD5veHZD\nV44WYwbgb+5wEdd+c6LbfWG58wKBgQDOnQXuM6rGaDxyWz2eO24uWPFizODkJf0c\nOy/DEMLJS6FohMj605CzPZEpBe2dNzRDSGa28QQAPH+bb1aPzGig89KSIlgP+VJh\n75gdo7E6Xec7GQNg5O6AWeP+fAx/tdDtVKfODzkKLSM6SIyKQwUHILX5MC7TglPV\nTYKlYxVgzQKBgDvHWRLdDjToQDbCj1us13osLIf9ukQ0agd5Y1/Gdu1RW7IWCucV\nYTL5y0x8hvGb7WULEz2muknkHmL8bRgUaWzRZVoBLs1alpbGoEHwXIGlq44SiHda\nv57edUF4sc5ypThOydE8ET49oCER4kHEkWAVADAQO6Q8+U078SrofWX9AoGAZv/S\neAgbx2MpVxzzH9GiwMooM8fNCQ+DGbLLwaO2ZyEj6vXfN2OGzEQR/HBvHyPpEu2h\n/usxwmhmePdNIMyXED3cqGskmXoCPr5xh70V2fH8FvMGQyR9XVDynuf6VyQtblL4\ngHoIRnFwEVsfbMGyXPZKoVoKzfg3kKteSNKXUrUCgYEArHJB3O7WmRVD/zaHsPyC\nI/A0xgmWfQD0IuGHlfqvSIUUqIOu4TJtSs7yHLiyoLH36tNcQR46Lluf6s5+W6k8\ncR52cBOXfNDmdSQ/aFOkVeG/6mi05wtOdylF8X/C8GtuRJh8Wb9gLsgwiHLa3xEb\n0AjcePfrsQHr5SruaUp9qrM=\n-----END PRIVATE KEY-----\n'
     },
-    projectId: process.env.GCLOUD_PROJECT_ID,
+    projectId: 'batikin-388401',
 });
 
 export default storage;
