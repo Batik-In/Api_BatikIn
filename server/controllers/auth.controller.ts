@@ -27,7 +27,11 @@ export default {
                 return httpResponse.send(res, 401, `Incorrect password!`, undefined);
             }
             const accessToken = generateAccessToken({id: user.id, email: user.email, role: user.role});
-            return httpResponse.send(res, 200, constant.success, { accessToken });
+            return httpResponse.send(res, 200, constant.success, {
+                userId: user.id.toString(),
+                name: user.name,
+                accessToken
+            });
         } catch(e) {
             console.log('ERROR on login : ', e);
             return httpResponse.mapError(e, res);
