@@ -15,10 +15,16 @@ steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'compute'
-      - 'instances'
-      - 'update-container'
+      - 'ssh'
       - 'batikin-instance'
       - '--zone=asia-southeast2-a'
-      - '--container-image=gcr.io/batikin-388401/backend:$COMMIT_SHA'
+      - '--command'
+      - |
+        set -e
+        docker pull gcr.io/batikin-388401/backend:$COMMIT_SHA
+        # Stop the existing process using the port
+        sudo fuser -k 3000/tcp
+        # Run the Docker container
+        docker run --env-file ./docker.env -d -p 3000:3000 gcr.io/batikin-388401/backend:$COMMIT_SHA
 options:
   logging: CLOUD_LOGGING_ONLY
