@@ -18,6 +18,7 @@ steps:
       - 'ssh'
       - 'batikin-instance'
       - '--zone=asia-southeast2-a'
+      - '--project=batikin-388401'
       - '--command'
       - |
         set -e
@@ -27,4 +28,5 @@ steps:
         # Run the Docker container
         docker run --env-file ./docker.env -d -p 3000:3000 asia-southeast2-docker.pkg.dev/batikin-388401/batikin-registry/backend:$COMMIT_SHA
 options:
+  substitution_option: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
