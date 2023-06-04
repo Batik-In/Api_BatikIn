@@ -20,3 +20,5 @@ steps:
       - 'batikin-instance'
       - '--zone=asia-southeast2-a'
       - '--container-image=gcr.io/batikin-388401/backend:$COMMIT_SHA'
+options:
+  logging: CLOUD_LOGGING_ONLY
