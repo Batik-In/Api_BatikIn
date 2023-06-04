@@ -1,0 +1,22 @@
+steps:
+  # Build docker images
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/batikin-388401/backend:$COMMIT_SHA'
+      - '.'
+  #push docker to artifact registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/batikin-388401/backend:$COMMIT_SHA'
+  # Deploy Container Image to Compute Engine
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'compute'
+      - 'instances'
+      - 'update-container'
+      - 'batikin-instance'
+      - '--zone=asia-southeast2-a'
+      - '--container-image=gcr.io/batikin-388401/backend:$COMMIT_SHA'
