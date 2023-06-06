@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "darwin-arm64", "debian-openssl-1.1.x", "linux-arm64-openssl-1.1.x"]
 }
 
@@ -74,6 +74,48 @@ model ScanHistory {
   rawResponse String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+}
+
+model Question {
+  id        Int      @id @default(autoincrement())
+  content   String
+  hasImage  Boolean
+  image     String?
+  options   Answer[]
+  isActive  Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Answer {
+  id          Int      @id @default(autoincrement())
+  questionId  Int
+  content     String
+  explanation String
+  hasImage    Boolean
+  image       String?
+  question    Question @relation(fields: [questionId], references: [id])
+  isCorrect   Boolean
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model QuizHistory {
+  id        String   @id
+  userId    Int
+  score     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuizHistoryDetail {
+  id            String   @id
+  quizHistoryId String
+  question      String
+  isCorrect     Boolean
+  explanation   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 enum ItemStatus {
