@@ -9,7 +9,8 @@ export default {
             valid: false,
             data: {
                 name,
-                description: ''
+                description: '',
+                city: ''
             },
             message: constant.data_not_found
         }
@@ -22,6 +23,7 @@ export default {
             if(data) {
                 result.valid = true;
                 result.data.name = `Batik ${name}`;
+                result.data.city = data.city;
                 result.data.description = data.description;
                 result.message = constant.success;
             }
@@ -33,13 +35,12 @@ export default {
     },
     getRandonBatikName() {
         /* This is function to testing image classification response (will be deprecated after ML model ready) */
-        const datas = ["mega mendung", "kraton", "batik test", "parang", "batik coba", "gentongan", "tujuh rupa", "batik"];
-        const randomIndex = Math.floor(Math.random() * datas.length);
-        return datas[randomIndex].toLowerCase();
-    },
-    async processImage() {
-        /* TODO : Forward image request to ML model */
-
+        const CLASS_LABELS = [
+            "geblek renteng", "gunungan", "kawung", "mega mendung", "parang",
+            "pring sedapur", "sidoarjo", "simbut", "truntum", "tumpal"
+        ];
+        const randomIndex = Math.floor(Math.random() * CLASS_LABELS.length);
+        return CLASS_LABELS[randomIndex].toLowerCase();
     },
     async saveClassificationHistory(userId: number, image: string, status: ProcessStatus, result: any, rawResponse: string) {
         /* Function to save image classification hsitory */
