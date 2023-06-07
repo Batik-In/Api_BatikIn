@@ -38,17 +38,15 @@ export default {
             const questionIndex: Array<number> = questions.map((q) => {
                 return q.id
             });
-            console.log('Q Index : ', questionIndex);
+            console.log('Question Total : ', questionIndex.length);
             const selectedIndex: Array<number> = [];
             do {
                 const randomIndex = Math.floor(Math.random() * questionIndex.length);
-                const exists = selectedIndex.find((s) => s === randomIndex);
-                console.log('selected index : ', exists);
-                if(exists === -1) {
+                const exists = selectedIndex.find((i) => i === randomIndex);
+                if(!exists) {
                     selectedIndex.push(randomIndex)
                 }
-                console.log('length : ', selectedIndex.length);
-            } while(selectedIndex.length < 5);
+            } while(selectedIndex.length < 10);
             const finalData = selectedIndex.map((i) => {
                 return questions[i];
             })
