@@ -39,7 +39,6 @@ export default {
                 /* Create */
                 result = await prisma.question.create({
                     data: { 
-                        id: Number(id),
                         content: question,
                         hasImage,
                         image: mediaUrl,
