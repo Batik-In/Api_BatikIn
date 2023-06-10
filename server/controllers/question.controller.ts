@@ -11,7 +11,7 @@ export default {
             if(req.user?.role !== 'ADMIN') {
                 return httpResponse.forbiddenAccess(res);
             }
-            const { id, question, options, isActive } = req.body;
+            let { id, question, options, isActive } = req.body;
             let mediaUrl = '';
             let hasImage = false;
             if(req.file) {
@@ -46,6 +46,7 @@ export default {
                         isActive
                     }
                 });
+                id = result.id;
             }
             let createNewAnswer = true;
             if((options as Array<IQuestionAnswer>)[0].id) {
@@ -58,7 +59,7 @@ export default {
                     (options as Array<IQuestionAnswer>).map((o) =>
                         prisma.answer.create({
                             data: {
-                                questionId: Number(o.questionId),
+                                questionId: Number(id),
                                 content: o.content,
                                 explanation: o.explanation,
                                 hasImage: false,
@@ -76,7 +77,7 @@ export default {
                                 id: Number(o.id)
                             },
                             data: {
-                                questionId: Number(o.questionId),
+                                questionId: Number(id),
                                 content: o.content,
                                 explanation: o.explanation,
                                 hasImage: false,
@@ -104,7 +105,7 @@ export default {
                     id: Number(questionId)
                 },
                 data: {
-                    isActive: Boolean(isActive)
+                    isActive
                 }
             })
             return httpResponse.send(res, 200, constant.success, data);
