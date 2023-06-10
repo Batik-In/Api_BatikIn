@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 import httpResponse from "../helpers/httpResponse";
 import constant from "../config/constant";
 import prisma from "../config/prisma";
