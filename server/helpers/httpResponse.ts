@@ -47,7 +47,7 @@ export default {
                             (err.meta as { target: string[] }).target.includes('subscriberNumber')
                             ? 'phone number'
                             : (err.meta as { target: string[] }).target.join(', ')
-                        } has been registered in bitbybit. Please enter a valid one`;
+                        } has been registered in this system. Please enter a valid one`;
                 }
                 if (err.code === 'P2003') {
                     status = 400;

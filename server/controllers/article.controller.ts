@@ -4,13 +4,18 @@ import prisma from "../config/prisma";
 import { ItemStatus } from "@prisma/client";
 import constant from "../config/constant";
 import { uid } from 'uid';
+import { uploadMedia } from "../helpers/uploadMedia";
 
 export default {
     async createArticle (req: Request, res: Response) {
         try {
-            const { categoryId, title, subtitle, content, image, status } = req.body;
             if(req.user?.role !== 'ADMIN') {
                 return httpResponse.forbiddenAccess(res);
+            }
+            const { categoryId, title, subtitle, content, status } = req.body;
+            let mediaUrl = '';
+            if(req.file) {
+                mediaUrl = await uploadMedia(req.file) as string;
             }
             const data = await prisma.articles.create({
                 data: {
@@ -19,7 +24,7 @@ export default {
                     subtitle,
                     content,
                     status: status as ItemStatus,
-                    image
+                    image: mediaUrl
                 }
             });
             return httpResponse.send(res, 201, constant.success, data);
@@ -30,9 +35,13 @@ export default {
     },
     async updateArticle (req: Request, res: Response) {
         try {
-            const { id, categoryId, title, subtitle, content, image, status } = req.body;
             if(req.user?.role !== 'ADMIN') {
                 return httpResponse.forbiddenAccess(res);
+            }
+            const { id, categoryId, title, subtitle, content, status } = req.body;
+            let mediaUrl = '';
+            if(req.file) {
+                mediaUrl = await uploadMedia(req.file) as string;
             }
             const exists = await prisma.articles.findFirst({
                 where: {
@@ -40,18 +49,21 @@ export default {
                 }
             });
             if(exists) {
+                let updateData: any = {
+                    categoryId: Number(categoryId),
+                    title,
+                    subtitle,
+                    content,
+                    status: status as ItemStatus
+                }
+                if(mediaUrl !== '') {
+                    updateData.image = mediaUrl;
+                }
                 const data = await prisma.articles.update({
                     where: {
                         id: Number(id)
                     },
-                    data: {
-                        categoryId: Number(categoryId),
-                        title,
-                        subtitle,
-                        content,
-                        status: status as ItemStatus,
-                        image
-                    }
+                    data: updateData
                 });
                 return httpResponse.send(res, 200, constant.success, data);
             }
