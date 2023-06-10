@@ -110,6 +110,24 @@ export default {
             return httpResponse.mapError(e, res);
         }
     },
+    async fetchClassificationHistoryAsAdmin(req: Request, res: Response) {
+        try {
+            if(req.user?.role !== 'ADMIN') {
+                return httpResponse.forbiddenAccess(res);
+            }
+            const { limit = 20 } = req.query;
+            const data = await prisma.scanHistory.findMany({
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                take: Number(limit)
+            });
+            return httpResponse.send(res, 200, constant.success, data);
+        } catch(e) {
+            console.log('ERROR on fetchClassificationHistory : ', e);
+            return httpResponse.mapError(e, res);
+        }
+    },
     async insertDummyClassification(req: Request, res: Response) {
         try {
             const data = await prisma.batik.createMany({
