@@ -55,13 +55,17 @@ export default {
     /* User or Admin can use this endpoint on profile page */
     async updateUserByToken(req: Request, res: Response) {
         try {
-            const { name } = req.body;
+            const { name, phone = '', address = '', city = '', profile = '' } = req.body;
             const data = await prisma.users.update({
                 where: {
                     id: Number(req.user?.id)
                 },
                 data: {
-                    name
+                    name,
+                    phone,
+                    address, 
+                    city,
+                    profilePicture: profile
                 }
             });
             return httpResponse.send(res, 200, constant.success, data);

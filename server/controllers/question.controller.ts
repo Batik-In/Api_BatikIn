@@ -15,7 +15,7 @@ export default {
             let mediaUrl = '';
             let hasImage = false;
             if(req.file) {
-                mediaUrl = await uploadMedia(req.file) as string;
+                mediaUrl = await uploadMedia(req.file, req.user.id) as string;
                 hasImage =  mediaUrl !== '';
             }
             let result = null;

@@ -30,6 +30,8 @@ app.use(express.static(path.resolve(__dirname, '../public')));
 app.get('/', async (req, res) => {
   return res.status(200).json({
     message: 'this is REST API for BatikIn project',
+    lastUpdate: 'Adjust media naming and add new fields on user table',
+    lastUpdateAt: '2023-06-12 21:55 GMT+7'
   });
 });
 app.use(router);

@@ -1,5 +1,5 @@
 import storage from '../config/storage';
-
+import { uid } from 'uid';
 const bucket = storage.bucket(process.env.GCLOUD_BUCKET || '');
 
 /**
@@ -11,11 +11,13 @@ const bucket = storage.bucket(process.env.GCLOUD_BUCKET || '');
  *   "originalname" and "buffer" as keys
  */
 
-export const uploadMedia = (file: any) => new Promise((resolve, reject) => {
-  const { originalname, buffer } = file;
+export const uploadMedia = (file: any, userId: number) => new Promise((resolve, reject) => {
+  let { originalname, buffer } = file;
   console.log('Upload Media !!');
-  const blob = bucket.file(originalname.replace(/ /g, "_"));
-
+  const uniqueId = uid(16);
+  let formattedName = `${userId}_${uniqueId}_${originalname.replace(/ /g, "_")}`;
+  const blob = bucket.file(formattedName);
+  
   blob.save(buffer, (err: any) => {
     if (err) {
       console.log(err);
