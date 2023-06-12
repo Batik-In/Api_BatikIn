@@ -38,7 +38,7 @@ export default {
     },
     async register(req: Request, res: Response) {
         try {
-            const { email, password, name } = req.body;
+            const { email, password, name, phone = '', address = '', city = '' } = req.body;
             const data = await prisma.users.findMany({
                 where: {
                     email
@@ -52,7 +52,10 @@ export default {
                 data: {
                     email,
                     password: await bcrypt.hash(password, await bcrypt.genSalt(10)),
-                    name
+                    name,
+                    phone,
+                    address,
+                    city
                 }
             });
             return httpResponse.send(res, 200, constant.success, newUser);
