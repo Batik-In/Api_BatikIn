@@ -6,6 +6,7 @@ import quizRouter from './quiz.router';
 import datasetRouter from './dataset.router';
 import questionRouter from './question.router';
 import userRouter from './user.router';
+import mediaRouter from './media.router';
 
 const router = exresss.Router();
 
@@ -16,5 +17,6 @@ router.use('/api/quiz', quizRouter);
 router.use('/api/batik', datasetRouter);
 router.use('/api/question', questionRouter);
 router.use('/api/user', userRouter);
+router.use('/api/media', mediaRouter);
 
 export default router;

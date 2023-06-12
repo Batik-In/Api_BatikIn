@@ -15,7 +15,7 @@ export default {
             const { categoryId, title, subtitle, content, status } = req.body;
             let mediaUrl = '';
             if(req.file) {
-                mediaUrl = await uploadMedia(req.file) as string;
+                mediaUrl = await uploadMedia(req.file, req.user.id) as string;
             }
             const data = await prisma.articles.create({
                 data: {
@@ -41,7 +41,7 @@ export default {
             const { id, categoryId, title, subtitle, content, status } = req.body;
             let mediaUrl = '';
             if(req.file) {
-                mediaUrl = await uploadMedia(req.file) as string;
+                mediaUrl = await uploadMedia(req.file, req.user.id) as string;
             }
             const exists = await prisma.articles.findFirst({
                 where: {
