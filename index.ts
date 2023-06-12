@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, '../public')));
 app.get('/', async (req, res) => {
   return res.status(200).json({
-    message: 'this is backend endpoint for batikin project',
+    message: 'this is REST API for BatikIn project',
   });
 });
 app.use(router);
