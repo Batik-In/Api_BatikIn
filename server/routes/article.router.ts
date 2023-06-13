@@ -5,6 +5,7 @@ import authenticateToken from '../middleware/authenticateToken';
 const articleRouter = express.Router();
 
 articleRouter.get('/bookmark', authenticateToken, articleController.fetchBookmarkArticles);
+articleRouter.get('/isBookmark/:id', authenticateToken, articleController.isBookmarked);
 articleRouter.post('/bookmark', authenticateToken, articleController.bookmarkArticle);
 articleRouter.delete('/bookmark/:id', authenticateToken, articleController.removeBookmark);
 
