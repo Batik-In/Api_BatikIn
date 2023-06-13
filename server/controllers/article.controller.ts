@@ -204,5 +204,29 @@ export default {
             console.log('ERROR on fetchBookmarkArticles : ', e);
             return httpResponse.mapError(e, res);
         }
+    },
+    async isBookmarked (req: Request, res: Response) {
+        try {
+            if(req.user?.role !== 'USER') {
+                return httpResponse.forbiddenAccess(res);
+            }
+            const { id } = req.params;
+            const data = await prisma.savedArticles.findFirst({
+                where: {
+                    userId: Number(req.user.id),
+                    articleId: Number(id)
+                }
+            });
+            const result = {
+                isBookmark: false
+            }
+            if(data) {
+                result.isBookmark = true;
+            }
+            return httpResponse.send(res, 200, constant.success, result);
+        } catch(e) {
+            console.log('ERROR on fetchBookmarkArticles : ', e);
+            return httpResponse.mapError(e, res);
+        }
     }
 }

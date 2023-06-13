@@ -8,9 +8,27 @@ export interface IQuizResultData {
     question: string;
     isCorrect: boolean;
     explanation: string;
+    correctExplanation: string;
 }
 
 export default {
+    async fetchActiveState(req: Request, res: Response) {
+        try {
+            if(req.user?.role !== 'USER') {
+                return httpResponse.forbiddenAccess(res);
+            }
+            const data = await prisma.quizHistory.findFirst({
+                where: {
+                    userId: req.user.id,
+                    status: 'DOING'
+                },
+            });
+            return httpResponse.send(res, 200, constant.success, data);
+        } catch(e) {
+            console.log('ERROR on fetchActiveState : ', e);
+            return httpResponse.mapError(e, res);
+        }
+    },
     /* Endpoint to randomize question */
     async startQuiz(req: Request, res: Response) {
         try {
@@ -38,7 +56,6 @@ export default {
             const questionIndex: Array<number> = questions.map((q) => {
                 return q.id
             });
-            console.log('Question Total : ', questionIndex.length);
             const selectedIndex: Array<number> = [];
             do {
                 const randomIndex = Math.floor(Math.random() * questionIndex.length);
@@ -50,7 +67,15 @@ export default {
             const finalData = selectedIndex.map((i) => {
                 return questions[i];
             })
-            return httpResponse.send(res, 201, constant.success, finalData);
+            const creation = await prisma.quizHistory.create({
+                data: {
+                    id: uid(16),
+                    userId: req.user.id,
+                    score: 0,
+                    questionList: JSON.stringify(finalData),
+                }
+            })
+            return httpResponse.send(res, 201, constant.success, creation);
         } catch(e) {
             console.log('ERROR on startQuiz : ', e);
             return httpResponse.mapError(e, res);
@@ -90,7 +115,8 @@ export default {
             const { questionId, answerId } = req.body;
             let response = {
                 isCorrect: false,
-                explanation: 'Sorry, no explanation for this answer'
+                explanation: 'Sorry, no explanation for this answer',
+                correctExplanation: ''
             }
             const answer = await prisma.answer.findFirst({
                 where: {
@@ -101,10 +127,57 @@ export default {
             if(answer) {
                 response.isCorrect = answer.isCorrect;
                 response.explanation = answer.explanation;
+                response.correctExplanation = answer.explanation;
+            }
+            if(!response.isCorrect) {
+                const correctAnswer = await prisma.answer.findFirst({
+                    where: {
+                        id: Number(answerId),
+                        questionId: Number(questionId),
+                        isCorrect: true
+                    },
+                });
+                if(correctAnswer) {
+                    response.correctExplanation = correctAnswer.explanation;
+                }
             }
             return httpResponse.send(res, 200, constant.success, response);
         } catch(e) {
             console.log('ERROR on checkAnswer : ', e);
+            return httpResponse.mapError(e, res);
+        }
+    },
+    async updateQuizState(req: Request, res: Response) {
+        try {
+            if(req.user?.role !== 'USER') {
+                return httpResponse.forbiddenAccess(res);
+            }
+            const { lastNumber, quizHistoryId, question, isCorrect, explanation, correctExplanation } = req.body;
+            const data = await prisma.quizHistoryDetail.upsert({
+                where: {
+                    quizHistoryId_number: {
+                        number: lastNumber,
+                        quizHistoryId
+                    }
+                },
+                create: {
+                    number: lastNumber,
+                    quizHistoryId,
+                    question,
+                    isCorrect,
+                    explanation,
+                    correctExplanation
+                },
+                update: {
+                    question,
+                    isCorrect,
+                    explanation,
+                    correctExplanation
+                }
+            });
+            return httpResponse.send(res, 200, constant.success, data);
+        } catch(e) {
+            console.log('ERROR on updateQuizState : ', e);
             return httpResponse.mapError(e, res);
         }
     },
@@ -114,29 +187,24 @@ export default {
             if(req.user?.role !== 'USER') {
                 return httpResponse.forbiddenAccess(res);
             }
-            const historyId = uid(16);
-            const { data, score } = req.body;
-            const creation = await prisma.quizHistory.create({
-                data: {
-                    id: historyId,
-                    userId: req.user.id,
-                    score: Number(score)
+            const { id } = req.body;
+            const correctAnswer = await prisma.quizHistoryDetail.findMany({
+                where: {
+                    quizHistoryId: id,
+                    isCorrect: true
                 }
             });
-            await prisma.$transaction(
-                (data as Array<IQuizResultData>).map((d) => 
-                    prisma.quizHistoryDetail.create({
-                        data: {
-                            id: uid(16),
-                            quizHistoryId: historyId,
-                            question: d.question,
-                            isCorrect: d.isCorrect,
-                            explanation: d.explanation
-                        }
-                    })
-                )
-            )
-            return httpResponse.send(res, 200, constant.success, creation);
+            const score = correctAnswer.length > 0 ? correctAnswer.length * 10 : 0;
+            const finalQuizUpdate = await prisma.quizHistory.update({
+                where: {
+                    id
+                },
+                data: {
+                    status: 'DONE',
+                    score
+                }
+            });
+            return httpResponse.send(res, 200, constant.success, finalQuizUpdate);
         } catch(e) {
             console.log('ERROR on saveQuizResult : ', e);
             return httpResponse.mapError(e, res);

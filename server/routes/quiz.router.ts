@@ -4,15 +4,18 @@ import quizController from '../controllers/quiz.controller';
 
 const quizRouter = express.Router();
 
-quizRouter.post('/start', authenticateToken, quizController.startQuiz); //
-quizRouter.post('/finalize', authenticateToken, quizController.saveQuizResult); //
-quizRouter.post('/dummy', quizController.generateDummyQuestion); // DONE
+quizRouter.get('/state', authenticateToken, quizController.fetchActiveState); // 1
+quizRouter.post('/start', authenticateToken, quizController.startQuiz); // 2
 
-quizRouter.get('/question/:id', quizController.fetchDetailQuestion); // DONE
-quizRouter.post('/answer/check', authenticateToken, quizController.checkAnswer); // DONE
+quizRouter.post('/finalize', authenticateToken, quizController.saveQuizResult); // 6
+quizRouter.post('/dummy', quizController.generateDummyQuestion); 
 
-quizRouter.get('/history', authenticateToken, quizController.fetchQuizHistory); // 
-quizRouter.get('/history/:id', authenticateToken, quizController.fetchQuizHistoryDetail); //
+quizRouter.get('/question/:id', quizController.fetchDetailQuestion); // 3
+quizRouter.post('/answer/check', authenticateToken, quizController.checkAnswer); // 4
+quizRouter.put('/state', authenticateToken, quizController.updateQuizState); // 5
+
+quizRouter.get('/history', authenticateToken, quizController.fetchQuizHistory); // 7
+quizRouter.get('/history/:id', authenticateToken, quizController.fetchQuizHistoryDetail); // 8
 
 
 export default quizRouter;
