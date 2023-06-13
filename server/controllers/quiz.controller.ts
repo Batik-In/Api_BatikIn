@@ -227,6 +227,9 @@ export default {
             const data = await prisma.quizHistory.findMany({
                 where: {
                     userId: req.user.id
+                },
+                orderBy: {
+                    updatedAt: 'desc'
                 }
             });
             return httpResponse.send(res, 200, constant.success, data);
@@ -235,6 +238,23 @@ export default {
             return httpResponse.mapError(e, res);
         }
     },
+        /* Endpoint to fetch quiz history as admin */
+        async fetchQuizHistoryAsAdmin(req: Request, res: Response) {
+            try {
+                if(req.user?.role !== 'ADMIN') {
+                    return httpResponse.forbiddenAccess(res);
+                }
+                const data = await prisma.quizHistory.findMany({
+                    orderBy: {
+                        updatedAt: 'desc'
+                    }
+                });
+                return httpResponse.send(res, 200, constant.success, data);
+            } catch(e) {
+                console.log('ERROR on fetchQuizHistory : ', e);
+                return httpResponse.mapError(e, res);
+            }
+        },
     /* Endpoint to  fetchQuizHistoryDetail */
     async fetchQuizHistoryDetail(req: Request, res: Response) {
         try {
