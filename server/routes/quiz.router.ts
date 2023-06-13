@@ -15,7 +15,7 @@ quizRouter.post('/answer/check', authenticateToken, quizController.checkAnswer);
 quizRouter.put('/state', authenticateToken, quizController.updateQuizState); // 5
 
 quizRouter.get('/history', authenticateToken, quizController.fetchQuizHistory); // 7
-quizRouter.get('/history/admin', authenticateToken, quizController.fetchQuizHistory); // 7
+quizRouter.get('/history/admin', authenticateToken, quizController.fetchQuizHistoryAsAdmin); // 7
 quizRouter.get('/history/:id', authenticateToken, quizController.fetchQuizHistoryDetail); // 8
 
 
