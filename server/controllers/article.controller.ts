@@ -194,7 +194,17 @@ export default {
                     userId: Number(req.user.id)
                 }
             });
-            return httpResponse.send(res, 200, constant.success, data);
+            const ids = data.map((d) => {
+                return d.articleId;
+            })
+            const articles = await prisma.articles.findMany({
+                where: {
+                    id: {
+                        in: ids
+                    }
+                }
+            });
+            return httpResponse.send(res, 200, constant.success, articles);
         } catch(e) {
             console.log('ERROR on fetchBookmarkArticles : ', e);
             return httpResponse.mapError(e, res);
