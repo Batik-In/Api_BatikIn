@@ -141,13 +141,13 @@ export default {
     },
     async bookmarkArticle (req: Request, res: Response) {
         try {
-            const { articleId } = req.body;
+            const { id } = req.params;
             if(req.user?.role !== 'USER') {
                 return httpResponse.forbiddenAccess(res);
             }
             const exists = await prisma.articles.findFirst({
                 where: {
-                    id: Number(articleId)
+                    id: Number(id)
                 }
             });
             if(!exists) {
@@ -157,7 +157,7 @@ export default {
                 data: {
                     id: uid(32),
                     userId: Number(req.user.id),
-                    articleId: Number(articleId)
+                    articleId: Number(id)
                 }
             });
             return httpResponse.send(res, 201, constant.success, data);
@@ -172,18 +172,13 @@ export default {
             if(req.user?.role !== 'USER') {
                 return httpResponse.forbiddenAccess(res);
             }
-            const data = await prisma.savedArticles.findFirst({
+            const data = await prisma.savedArticles.deleteMany({
                 where: {
-                    id: id as string
+                    userId: req.user.id,
+                    articleId: Number(id)
                 }
             });
-            if(!data) {
-                return httpResponse.send(res, 404, constant.data_not_found, undefined);
-            }
-            if(req.user.id !== data.userId) {
-                return httpResponse.forbiddenAccess(res);
-            }
-            return httpResponse.send(res, 200, constant.success, undefined);
+            return httpResponse.send(res, 200, constant.success, data);
         } catch(e) {
             console.log('ERROR on removeBookmark : ', e);
             return httpResponse.mapError(e, res);
