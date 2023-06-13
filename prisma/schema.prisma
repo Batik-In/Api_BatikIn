@@ -106,21 +106,27 @@ model Answer {
 }
 
 model QuizHistory {
-  id        String   @id
-  userId    Int
-  score     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String     @id
+  userId       Int
+  score        Int
+  questionList String     @default("")
+  status       QuizStatus @default(DOING)
+  state        Int        @default(1)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model QuizHistoryDetail {
-  id            String   @id
-  quizHistoryId String
-  question      String
-  isCorrect     Boolean
-  explanation   String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  quizHistoryId      String
+  number             Int
+  question           String
+  isCorrect          Boolean
+  explanation        String
+  correctExplanation String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@id([quizHistoryId, number])
 }
 
 enum ItemStatus {
@@ -131,4 +137,9 @@ enum ItemStatus {
 enum ProcessStatus {
   SUCCESS
   FAILED
+}
+
+enum QuizStatus {
+  DOING
+  DONE
 }
