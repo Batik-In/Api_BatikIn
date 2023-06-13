@@ -153,6 +153,14 @@ export default {
                 return httpResponse.forbiddenAccess(res);
             }
             const { lastNumber, quizHistoryId, question, isCorrect, explanation, correctExplanation } = req.body;
+            await prisma.quizHistory.update({
+                where: {
+                    id: quizHistoryId
+                },
+                data: {
+                    state: lastNumber + 1
+                }
+            })
             const data = await prisma.quizHistoryDetail.upsert({
                 where: {
                     quizHistoryId_number: {
