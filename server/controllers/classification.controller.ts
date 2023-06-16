@@ -29,52 +29,27 @@ export default {
 
             console.log('Preprocess Image');
             /* Start Make the prediction using the loaded model */
-            const inputData = await preprocessImage(mediaUrl as string);
+            const imagePreprocessed = await preprocess2(mediaUrl as string);
             // Convert the input data to float32
-            const float32InputData = inputData.toFloat();
             console.log('Predicting...');
-            const prediction = model.predict(float32InputData);
-
-            let predictionValues: number[] | number[][] | number[][][] | number[][][][] | number[][][][][] | number[][][][][][];
-
-            if (prediction instanceof tf.Tensor) {
-                /* Single tensor case */
-                predictionValues = prediction.arraySync() as number[];
-            } else if (Array.isArray(prediction)) {
-                /* Multiple tensors case */
-                predictionValues = prediction.map(tensor => tensor.arraySync()) as number[] | number[][] | number[][][] | number[][][][] | number[][][][][];
-            } else {
-                /* Handle other cases or throw an error */
-                throw new Error("Invalid prediction format");
+            const a = imagePreprocessed?.toFloat();
+            let classIndex = 0;
+            let raw = "";
+            if(a) {
+                const p2 = model.predict(a) as tf.Tensor;;
+                raw = JSON.stringify(p2);
+                const predictedClassTensor = tf.argMax(p2, 1);
+                const predictedClassIndex = await predictedClassTensor.data();
+                const predictedClass = predictedClassIndex[0];
+                console.log("Predicted Class : ", predictedClass)
+                classIndex = predictedClass;
             }
 
-            console.log('Prediction Result : ', predictionValues);
-
-            /* Flatten the array of values */
-            let flattened = ([] as number[]).concat(
-                ...(Array.isArray(predictionValues[0])
-                  ? (predictionValues as number[][]).flat()
-                  : (predictionValues as number[])
-                )
-            );
-            
-            /* Find the index of the highest value in the array */
-            let maxValue = 0;
-            let maxIndex = 0;
-            for(let i = 1; i < flattened.length; i++) {
-                let stringValue = flattened[i].toString();
-                const split = stringValue.split('e');
-                const finalValue = parseFloat(split[0]); 
-                if (finalValue > maxValue) {
-                    maxIndex = i;
-                    maxValue = finalValue;
-                }
-            }
             /* Get the predicted class label */
-            const predictedClass = CLASS_LABELS[maxIndex];
+            const predictedClass = CLASS_LABELS[classIndex];
 
             const batikDetail = await batikClassification.fetchBatikByName(predictedClass);
-            batikClassification.saveClassificationHistory(req.user?.id || 0, mediaUrl as string, 'SUCCESS', batikDetail, JSON.stringify(flattened));
+            batikClassification.saveClassificationHistory(req.user?.id || 0, mediaUrl as string, 'SUCCESS', batikDetail, raw);
             
             return res.status(200).json({
                 message: constant.success,
@@ -82,8 +57,7 @@ export default {
                     name: batikDetail.data.name,
                     description: batikDetail.data.description,
                     city: batikDetail.data.city,
-                    imageUrl: mediaUrl,
-                    predictionResult: flattened
+                    imageUrl: mediaUrl
                 }
             });
           } catch (error) {
@@ -240,5 +214,25 @@ const preprocessImage = async (imageUrl: string) => {
     } catch (error) {
       console.error('Image preprocessing error:', error);
       throw new Error('Image preprocessing failed');
+    }
+  }
+
+  const preprocess2 = async (imageUrl: string) => {
+    try {
+         //convert the image data to a tensor 
+         const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+         const imageData = Buffer.from(response.data, 'binary');
+
+         const tensor = tf.node.decodeImage(imageData);
+        //resize to 50 X 50
+        const resized = tf.image.resizeBilinear(tensor, [224, 224]).toFloat()
+        // Normalize the image 
+        const offset = tf.scalar(255.0);
+        const normalized = tf.scalar(1.0).sub(resized.div(offset));
+        //We add a dimension to get a batch shape 
+        const batched = normalized.expandDims(0)
+        return batched
+    } catch(e) {
+        console.log('ERROR preprocess2 : ', e);
     }
   }
