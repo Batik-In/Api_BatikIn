@@ -24,9 +24,11 @@ The BatikIn API Backend offers the following features:
 Here some flowchart on our feature : 
 
 - **Quiz**
+
 ![Quiz Flowchart](quiz_flowchart.png)
 
 - **Image Classification**
+
 ![Image Classification Flowchart](classification_flowchart.png)
 
 ## Cloud Architecture 
