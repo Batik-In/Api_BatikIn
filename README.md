@@ -31,11 +31,6 @@ Here some flowchart on our feature :
 
 ![Image Classification Flowchart](classification_flowchart.png)
 
-## Cloud Architecture 
-
-Our overall cloud architecture looks like this : 
-
-![Cloud Architecture](cloud_architecture.png)
 
 
 
