@@ -5,7 +5,7 @@ BatikIn is a project focused on Batik Image Recognition and Education. It aims t
 
 ## Documentation
 
-The API documentation for BatikIn can be found [here](link-to-api-docs). It provides detailed information about the available endpoints, request/response formats, and authentication requirements.
+The API documentation for BatikIn can be found [here]([link-to-api-docs](https://documenter.getpostman.com/view/16118842/2s93shz9Nf)). It provides detailed information about the available endpoints, request/response formats, and authentication requirements.
 
 ## API Features
 
