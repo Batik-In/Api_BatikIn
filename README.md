@@ -1,7 +1,7 @@
 # REST API
 # BatikIn
 
-![BatikIn_Logo](logo.png)
+![BatikIn_Logo](logo_2.png)
 
 BatikIn is a project focused on Batik Image Recognition and Education. It aims to provide a platform for recognizing and learning about various Batik patterns. This repository contains the backend API for the BatikIn application.
 
